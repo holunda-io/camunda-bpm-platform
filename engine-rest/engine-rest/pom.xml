@@ -8,7 +8,7 @@
     <groupId>org.camunda.bpm</groupId>
     <artifactId>camunda-engine-rest-root</artifactId>
     <relativePath>../</relativePath>
-    <version>7.15.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -94,17 +94,6 @@
       <scope>provided</scope>
     </dependency>
 
-    <!--
-      needed for offline shrinkwrap
-      see src/test/java/org/camunda/bpm/engine/rest/util/container/TomcatServerBootstrap.java
-    -->
-    <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-jaxrs</artifactId>
-      <version>1.6.5</version>
-      <scope>test</scope>
-    </dependency>
-    
     <!--
       needed for offline shrinkwrap (in particular CustomJacksonDateFormatTest), 
       BOMs must be installed before this module is built

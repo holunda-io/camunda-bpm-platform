@@ -9,7 +9,7 @@
     <groupId>org.camunda.bpm</groupId>
     <artifactId>camunda-database-settings</artifactId>
     <relativePath>../database</relativePath>
-    <version>7.15.0-SNAPSHOT</version>
+    <version>7.16.0-SNAPSHOT</version>
   </parent>
 
   <dependencyManagement>
@@ -67,8 +67,16 @@
         <!-- these exclusions are needed when building with Maven >= 3.3
           see CAM-11822 for details -->
         <exclusion>
-          <groupId>org.scala-lang.modules</groupId>
-          <artifactId>scala-parser-combinators_2.13</artifactId>
+          <groupId>com.lihaoyi</groupId>
+          <artifactId>fastparse_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.lihaoyi</groupId>
+          <artifactId>sourcecode_2.13</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.lihaoyi</groupId>
+          <artifactId>geny_2.13</artifactId>
         </exclusion>
         <exclusion>
           <groupId>org.scala-lang</groupId>
@@ -335,6 +343,18 @@
 
   <build>
     <!-- filter test configurations to inject properties -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>org/camunda/bpm/engine/product-info.properties</include>
+        </includes>
+      </resource>
+    </resources>
     <testResources>
       <testResource>
         <directory>src/test/resources</directory>

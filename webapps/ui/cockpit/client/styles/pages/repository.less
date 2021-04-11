@@ -59,6 +59,10 @@
     display: block;
   }
 
+  h4.form-preview {
+    padding-top: 30px;
+  }
+
   .cmmn-resource,
   .unkown-resource,
   .image-resource {
@@ -99,9 +103,9 @@
     }
   }
 
-  .ctn-tabbed-content > h4 {
+  .ctn-tabbed-content h4 {
     margin-top: @grid-gutter-width;
-    margin-bottom: 0;
+    margin-bottom: (@grid-gutter-width * 0.5);
   }
 }
 
@@ -165,7 +169,8 @@
   }
 
   .column-left,
-  .column-center {
+  .column-center,
+  .column-right {
     .three-cols-layout-cell.content {
       position: absolute;
     }

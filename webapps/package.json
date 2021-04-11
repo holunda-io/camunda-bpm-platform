@@ -1,7 +1,7 @@
 {
   "name": "camunda-bpm-webapp",
   "private": true,
-  "version": "7.15.0-SNAPSHOT",
+  "version": "7.16.0-SNAPSHOT",
   "gruntConfig": {
     "connectPort": 8020,
     "livereloadPort": 8021,
@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@bpmn-io/dmn-migrate": "0.4.3",
+    "@bpmn-io/form-js": "0.0.8",
     "angular": "1.8.2",
     "angular-animate": "1.8.2",
     "angular-cookies": "1.8.2",

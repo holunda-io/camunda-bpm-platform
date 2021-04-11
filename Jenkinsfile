@@ -18,7 +18,7 @@ pipeline {
     copyArtifactPermission('*')
   }
   parameters {
-    string defaultValue: 'cambpm-ee-main-pr/master', description: 'The name of the EE branch/PR to run the EE pipeline on, e.g. cambpm-ee-main/PR-333', name: 'EE_DOWNSTREAM'
+    string name: 'EE_DOWNSTREAM', defaultValue: 'cambpm-ee-main-pr/master', description: 'The name of the EE branch/PR to run the EE pipeline on, e.g. cambpm-ee-main/PR-333'
   }
   stages {
     stage('ASSEMBLY') {
@@ -33,7 +33,7 @@ pipeline {
           suppressErrors: false,
           runSteps: {
             cambpmRunMaven('.',
-                'clean install source:jar -Pdistro,distro-ce,distro-wildfly,distro-webjar com.mycila:license-maven-plugin:check',
+                'clean source:jar deploy source:test-jar com.mycila:license-maven-plugin:check -Pdistro,distro-ce,distro-wildfly,distro-webjar -DaltStagingDirectory=${WORKSPACE}/staging -DskipRemoteStaging=true',
                 withCatch: false,
                 withNpm: true)
 
@@ -47,7 +47,8 @@ pipeline {
                                   '.m2/org/camunda/**/*-SNAPSHOT/**/camunda-webapp*.war',
                                   '.m2/org/camunda/**/*-SNAPSHOT/**/camunda-engine-rest*.war',
                                   '.m2/org/camunda/**/*-SNAPSHOT/**/camunda-example-invoice*.war',
-                                  '.m2/org/camunda/**/*-SNAPSHOT/**/camunda-h2-webapp*.war')
+                                  '.m2/org/camunda/**/*-SNAPSHOT/**/camunda-h2-webapp*.war',
+                                  '.m2/org/camunda/**/*-SNAPSHOT/**/camunda-bpm-run-modules-swaggerui-*-run-swaggerui-license-book-json.json')
 
             cambpmStash("platform-stash-runtime",
                         ".m2/org/camunda/**/*-SNAPSHOT/**",
@@ -62,23 +63,28 @@ pipeline {
               if (env.BRANCH_NAME == cambpmDefaultBranch()) {
                 // CE master triggers EE master
                 // otherwise CE PR branch triggers EE PR branch
-                eeMainProjectBranch = "cambpm-ee-main/pipeline-master"
+                eeMainProjectBranch = "cambpm-ee-main/master"
               } else {
                 eeMainProjectBranch = params.EE_DOWNSTREAM
               }
 
+              // JOB_NAME, e.g.: '7.15/cambpm-ce/cambpm-main/PR-1373'
+              platformVersion = env.JOB_NAME.split('/')[0]
+
               if (cambpmWithLabels('webapp-integration', 'all-as', 'h2', 'websphere', 'weblogic', 'jbosseap', 'run', 'spring-boot', 'authorizations', 'e2e')) {
                 cambpmTriggerDownstream(
-                  "cambpm-ee/" + eeMainProjectBranch,
+                  platformVersion + "/cambpm-ee/" + eeMainProjectBranch,
                   [string(name: 'UPSTREAM_PROJECT_NAME', value: env.JOB_NAME),
                   string(name: 'UPSTREAM_BUILD_NUMBER', value: env.BUILD_NUMBER)],
                   true, true, true
                 )
               }
 
-              if (cambpmWithLabels('all-db', 'cockroachdb', 'authorizations')) {
+              // the sidetrack pipeline should be triggered on daily,
+              // or PR builds only, master builds should be excluded
+              if (env.BRANCH_NAME != cambpmDefaultBranch() && cambpmWithLabels('all-db', 'cockroachdb', 'authorizations')) {
                 cambpmTriggerDownstream(
-                  "cambpm-ce/cambpm-sidetrack/${env.BRANCH_NAME}",
+                  platformVersion + "/cambpm-ce/cambpm-sidetrack/${env.BRANCH_NAME}",
                   [string(name: 'UPSTREAM_PROJECT_NAME', value: env.JOB_NAME),
                   string(name: 'UPSTREAM_BUILD_NUMBER', value: env.BUILD_NUMBER)]
                 )
@@ -86,7 +92,7 @@ pipeline {
 
               if (cambpmWithLabels('daily', 'default-build', 'rolling-update', 'migration', 'all-db', 'h2', 'db2', 'mysql', 'oracle', 'mariadb', 'sqlserver', 'postgresql')) {
                 cambpmTriggerDownstream(
-                  "cambpm-ce/cambpm-daily/${env.BRANCH_NAME}",
+                  platformVersion + "/cambpm-ce/cambpm-daily/${env.BRANCH_NAME}",
                   [string(name: 'UPSTREAM_PROJECT_NAME', value: env.JOB_NAME),
                   string(name: 'UPSTREAM_BUILD_NUMBER', value: env.BUILD_NUMBER)]
                 )
