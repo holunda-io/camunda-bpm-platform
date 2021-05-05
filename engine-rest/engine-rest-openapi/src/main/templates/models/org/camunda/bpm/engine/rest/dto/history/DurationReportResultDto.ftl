@@ -1,4 +1,9 @@
+<#macro dto_macro docsUrl="">
 <@lib.dto>
+
+  <#-- NOTE: Please consider adjusting the `HistoricTaskInstanceReportResultDto.ftl` file,
+       if the properties are valid there as well. The DTO was created separately as it is
+       included in a `oneOf` relation for the Historic Task Instance endpoints -->
 
   <@lib.property
       name = "period"
@@ -33,3 +38,4 @@
       desc = "The average duration in milliseconds of all completed process instances which were started in the given period."/>
 
 </@lib.dto>
+</#macro>

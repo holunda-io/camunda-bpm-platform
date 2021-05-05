@@ -217,7 +217,9 @@
 </#macro>
 
 <#-- Generates a Request Body JSON object -->
-<#macro requestBody mediaType dto
+<#macro requestBody mediaType 
+        dto=""
+        flatType=""
         requestDesc=""
         examples=[] >
   "requestBody" : {
@@ -230,7 +232,11 @@
       "${mediaType}" : {
 
         "schema" : {
-          "$ref" : "#/components/schemas/${dto}"
+          <#if dto?has_content >
+            "$ref" : "#/components/schemas/${dto}"
+          <#elseif flatType?has_content >
+            "type": "${flatType}"
+          </#if>
         }
 
         <#if examples?size != 0>,
@@ -252,6 +258,7 @@
         array=false
         additionalProperties=false
         mediaType="application/json"
+        binary = false
         examples=[]
         last=false >
     "${code}": {
@@ -263,6 +270,7 @@
                 array = array
                 additionalProperties = additionalProperties
                 mediaType = mediaType
+                binary = binary
                 examples = examples />
           },
         </#if>
@@ -288,6 +296,7 @@
                   array = type["array"]
                   additionalProperties = type["additionalProperties"]
                   mediaType = type["mediaType"]
+                  binary = type["binary"]
                   examples = type["examples"] /><#sep>,
             </#list>
           },
@@ -305,8 +314,9 @@
         array=false
         additionalProperties=false
         mediaType="application/json"
+        binary = false
         examples=[] >
-           <#if mediaType == "application/xhtml+xml" | (mediaType == "application/json" & !array & flatType == "string")>
+           <#if mediaType == "application/xhtml+xml" | (mediaType == "application/json" & !array & flatType == "string") | binary>
              "${mediaType}": {
                "schema": {
                  "type": "string",
@@ -381,11 +391,18 @@
         id
         tag
         desc
+        deprecated = false
         summary = "" >
+
+    <#if deprecated>
+      "deprecated": true,
+    </#if>
+
     "operationId": "${id}",
     "tags": [
       "${tag}"
     ],
+
 
     <#if summary?has_content>
       "summary": "${summary}",

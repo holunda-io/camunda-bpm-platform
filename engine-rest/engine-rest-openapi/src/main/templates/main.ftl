@@ -36,22 +36,41 @@
 
   ],
   "tags": [
+    {"name": "Authorization"},
     {"name": "Batch"},
     {"name": "Condition"},
     {"name": "Decision Definition"},
+    {"name": "Decision Requirements Definition"},
     {"name": "Deployment"},
     {"name": "Engine"},
     {"name": "Event Subscription"},
     {"name": "Execution"},
     {"name": "External Task"},
+    {"name": "Filter"},
     {"name": "Group"},
     {"name": "Historic Activity Instance"},
+    {"name": "Historic Batch"},
+    {"name": "Historic Decision Definition"},
+    {"name": "Historic Decision Instance"},
+    {"name": "Historic Decision Requirements Definition"},
+    {"name": "Historic Detail"},
+    {"name": "Historic External Task Log"},
+    {"name": "Historic Identity Link Log"},
+    {"name": "Historic Incident"},
+    {"name": "Historic Job Log"},
+    {"name": "Historic Process Definition"},
     {"name": "Historic Process Instance"},
+    {"name": "Historic Task Instance"},
+    {"name": "Historic User Operation Log"},
+    {"name": "History Cleanup"},
     {"name": "Identity"},
     {"name": "Incident"},
     {"name": "Job"},
+    {"name": "Job Definition"},
     {"name": "Message"},
     {"name": "Metrics"},
+    {"name": "Migration"},
+    {"name": "Modification"},
     {"name": "Process Definition"},
     {"name": "Process Instance"},
     {"name": "Signal"},
@@ -73,8 +92,9 @@
     <#list endpoints as path, methods>
         "${path}": {
             <#list methods as method>
+                <#import "/paths${path}/${method}.ftl" as endpoint>
                 "${method}":
-                <#include "/paths${path}/${method}.ftl"><#sep>,
+                <@endpoint.endpoint_macro docsUrl=docsUrl/><#sep>,
             </#list>
         }<#sep>,
     </#list>
@@ -84,7 +104,8 @@
     "schemas": {
 
     <#list models as name, package>
-        "${name}": <#include "/models/${package}/${name}.ftl"><#sep>,
+        <#import "/models/${package}/${name}.ftl" as schema>
+        "${name}": <@schema.dto_macro docsUrl=docsUrl/><#sep>,
     </#list>
 
     }
