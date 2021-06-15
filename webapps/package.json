@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@bpmn-io/dmn-migrate": "0.4.3",
-    "@bpmn-io/form-js": "0.0.8",
+    "@bpmn-io/form-js": "0.1.0",
     "angular": "1.8.2",
     "angular-animate": "1.8.2",
     "angular-cookies": "1.8.2",
@@ -54,7 +54,7 @@
     "fast-xml-parser": "3.17.6",
     "jquery": "3.5.1",
     "jquery-ui": "1.12.1",
-    "lodash": "4.17.20",
+    "lodash": "4.17.21",
     "moment": "2.24.0",
     "mousetrap": "1.6.5",
     "q": "1.5.1",
